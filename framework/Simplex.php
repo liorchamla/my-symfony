@@ -46,7 +46,11 @@ class Simplex
         try {
             $request->attributes->add($this->urlMatcher->match($request->getPathInfo()));
 
-            $this->dispatcher->dispatch(new RequestEvent($request), 'kernel.request');
+            $event = new RequestEvent($request);
+            $this->dispatcher->dispatch($event, 'kernel.request');
+            if ($event->getResponse() !== null) {
+                return $event->getResponse();
+            }
 
             $controller = $this->controllerResolver->getController($request);
 
