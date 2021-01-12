@@ -13,27 +13,12 @@ class IndexTest extends TestCase
 {
     public function testHello()
     {
-        $request = Request::create('/hello/Lior');
+        $_GET['name'] = 'Lior';
 
-        $routes = require __DIR__ . '/../src/routes.php';
+        ob_start();
+        include 'index.php';
+        $content = ob_get_clean();
 
-        $framework = new \Simplex\Framework(new UrlMatcher($routes, new RequestContext()), new ControllerResolver(), new ArgumentResolver());
-
-        $response = $framework->handle($request);
-
-        $this->assertEquals('Hello Lior', $response->getContent());
-    }
-
-    public function testAbout()
-    {
-        $request = Request::create('/a-propos');
-
-        $routes = require __DIR__ . '/../src/routes.php';
-
-        $framework = new \Simplex\Framework(new UrlMatcher($routes, new RequestContext()), new ControllerResolver(), new ArgumentResolver());
-
-        $response = $framework->handle($request);
-
-        $this->assertStringContainsString('A propos de nous', $response->getContent());
+        $this->assertEquals('Hello Lior', $content);
     }
 }
