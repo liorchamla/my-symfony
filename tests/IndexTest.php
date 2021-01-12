@@ -1,5 +1,6 @@
 <?php
 
+use Framework\Simplex;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use SebastianBergmann\RecursionContext\InvalidArgumentException;
@@ -11,14 +12,34 @@ use Symfony\Component\Routing\RequestContext;
 
 class IndexTest extends TestCase
 {
+    protected Simplex $framework;
+
+    protected function setUp(): void
+    {
+        $routes = require __DIR__ . '/../src/routes.php';
+
+        $urlMatcher = new UrlMatcher($routes, new RequestContext());
+        $controllerResolver = new ControllerResolver();
+        $argumentResolver = new ArgumentResolver();
+
+        $this->framework = new Simplex($urlMatcher, $controllerResolver, $argumentResolver);
+    }
+
     public function testHello()
     {
-        $_GET['name'] = 'Lior';
+        $request = Request::create('/hello/Lior');
 
-        ob_start();
-        include 'index.php';
-        $content = ob_get_clean();
+        $response = $this->framework->handle($request);
 
-        $this->assertEquals('Hello Lior', $content);
+        $this->assertEquals('Hello Lior', $response->getContent());
+    }
+
+    public function testBye()
+    {
+        $request = Request::create('/bye');
+
+        $response = $this->framework->handle($request);
+
+        $this->assertEquals('<h1>Goodbye!</h1>', $response->getContent());
     }
 }
