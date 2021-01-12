@@ -4,6 +4,7 @@ use Framework\Simplex;
 use PHPUnit\Framework\ExpectationFailedException;
 use PHPUnit\Framework\TestCase;
 use SebastianBergmann\RecursionContext\InvalidArgumentException;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Controller\ArgumentResolver;
 use Symfony\Component\HttpKernel\Controller\ControllerResolver;
@@ -21,8 +22,9 @@ class IndexTest extends TestCase
         $urlMatcher = new UrlMatcher($routes, new RequestContext());
         $controllerResolver = new ControllerResolver();
         $argumentResolver = new ArgumentResolver();
+        $dispatcher = new EventDispatcher;
 
-        $this->framework = new Simplex($urlMatcher, $controllerResolver, $argumentResolver);
+        $this->framework = new Simplex($dispatcher, $urlMatcher, $controllerResolver, $argumentResolver);
     }
 
     public function testHello()
