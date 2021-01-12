@@ -66,7 +66,7 @@ class Simplex
         } catch (ResourceNotFoundException $e) {
             $response = new Response("Le page demandée n'existe pas", 404);
         } catch (Exception $e) {
-            $response = new Response("Une erreur est survenue", 500);
+            $response = new Response($e->getMessage(), 500);
         }
 
         return $response;

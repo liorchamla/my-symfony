@@ -1,0 +1,31 @@
+services:
+  _defaults:
+    public: true
+    autowire: true
+
+  App\Controller\:
+    resource: "../src/Controller/*"
+
+  App\Controller\GreetingController:
+    arguments:
+      $age: 33
+
+  # Ne pas toucher ça concerne le Framework
+  Symfony\Component\Routing\RequestContext: ~
+  Symfony\Component\EventDispatcher\EventDispatcher: ~
+  Symfony\Component\HttpKernel\Controller\ArgumentResolver: ~
+  Framework\Resolver\ContainerControllerResolver:
+    arguments:
+      $container: "@service_container"
+
+  Framework\Simplex:
+    arguments:
+      - '@Symfony\Component\EventDispatcher\EventDispatcher'
+      - '@Symfony\Component\Routing\Matcher\UrlMatcher'
+      - '@Framework\Resolver\ContainerControllerResolver'
+      - '@Symfony\Component\HttpKernel\Controller\ArgumentResolver'
+
+  Symfony\Component\Routing\Matcher\UrlMatcher:
+    arguments:
+      - "%routes%"
+      - '@Symfony\Component\Routing\RequestContext'

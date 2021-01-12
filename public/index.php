@@ -1,6 +1,14 @@
 <?php
 
+use App\Controller\GreetingController;
+use App\Controller\PageController;
 use Framework\Event\RequestEvent;
+use Framework\Resolver\ContainerControllerResolver;
+use Framework\Simplex;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,22 +22,11 @@ use Symfony\Contracts\EventDispatcher\Event;
 
 require __DIR__ . '/../vendor/autoload.php';
 
-
-$request = Request::createFromGlobals();
-
 $routes = require __DIR__ . '/../src/routes.php';
+$container =  require __DIR__ . '/../src/container.php';
 
-$context = new RequestContext();
-
-$urlMatcher = new UrlMatcher($routes, $context);
-
-$controllerResolver = new ControllerResolver();
-$argumentResolver = new ArgumentResolver();
-
-$dispatcher = new EventDispatcher;
-
-$framework = new Framework\Simplex($dispatcher, $urlMatcher, $controllerResolver, $argumentResolver);
-
+// Travail du framework
+$request = Request::createFromGlobals();
+$framework = $container->get(Simplex::class);
 $response = $framework->handle($request);
-
 $response->send();
